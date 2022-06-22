@@ -20,7 +20,7 @@
 		<img src="images/log10.png" alt="" width="100">
 	</span>
 	<span style="font-weight: bold;">
-		ACADA Learning, 
+		ACADA Learning Platform, 
 		Alberta, Calgary, Canada
 		+1 587 574 2233,
 		info@acadalearning.com
