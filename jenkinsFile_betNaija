@@ -1,0 +1,67 @@
+ef date = new Date().format("yyyy-MM-dd' 'HH:mm:ss.SSSXXX' '",TimeZone.getTimeZone('America/Toronto'))
+def date1 = new Date().format("yyyy-MM-dd' 'HH:mm:ss.SSSXXX' '",TimeZone.getTimeZone('America/Toronto'))
+pipeline{
+  agent any //{label "node1"}
+  tools{
+    maven "maven3.8.4"
+  }
+  stages{
+    stage("1.CodeClone"){
+      steps{
+        buildName "BetNaija${BUILD_NUMBER}"
+        slackSend color: "good", message:  date + " \n :large_green_circle: *STARTED* \n ${env.JOB_NAME} Build${env.BUILD_NUMBER}" 
+        git branch: "stage", url: "https://github.com/acetunde/maven-web-app.git"
+      }
+    }
+    stage("2.Build"){
+      steps{
+        sh "mvn clean package"
+      }
+    }
+    /*
+    stage("3.CodeQuality"){
+      steps{
+        sh "mvn sonar:sonar"
+      }
+    }
+    stage("4.Artifacts"){
+      steps{
+        sh "mvn deploy"
+      }
+    }
+    stage("5.DeploytoUAT"){
+      steps{
+        deploy adapters: [tomcat9(credentialsId: 'tomcat-cred', path: '', url: 'http://23.20.107.224:8080/')], contextPath: null, war: 'target/*.war'
+      }
+    }
+    
+    stage("6.Approval"){
+      steps{
+        timeout(time:5, unit:'DAYS'){
+       input message: 'Approval for Production'
+      }
+    }
+  }
+  */
+    //stage("7.deploytoPROD"){
+     // steps{
+       // deploy adapters: [tomcat9(credentialsId: 'tomcat-cred1', path: '', url: 'http://172.31.24.219:8080/')], contextPath: 'build_01.war', war: 'target/*.war'
+      //}
+   // }
+    /*
+    stage("8.EmailNotification"){
+      steps{
+        emailext body: 'This is Build Success', subject: 'Build Success', to: 'info@acadalearning.com'
+      }
+    }
+  */
+  }
+  post {
+      success {
+            slackSend color: "good", message:  date1 + " \n :heavy_check_mark: *SUCCESS* \n ${env.JOB_NAME} Build${env.BUILD_NUMBER}"
+        }
+        failure {
+            slackSend color: "danger", message:  date1 + " \n :no_entry: *FAILED* \n ${env.JOB_NAME} Build${env.BUILD_NUMBER}"
+  }
+}
+}
